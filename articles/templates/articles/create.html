@@ -3,9 +3,10 @@
 {% block title %}Article::Create{% endblock title %}
 
 {% block container %}
-<form>
-  <input type="text"><br>
-  <textarea cols="30" rows="10"></textarea><br>
+<form method="POST">
+  {% comment %} 요청을 보내려는 url이 현재와 같다면 action="{% url 'articles:create' %}" 생략 가능 {% endcomment %}
+  {% csrf_token %}
+  {{ form.as_p }}
   <button type="submit">생성하기</button>
 </form>
 {% endblock container %}

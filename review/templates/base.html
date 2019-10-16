@@ -10,6 +10,8 @@
   <header>
     <h1>저희 페이지에 오신걸 환영합니다.</h1>
   </header>
+  <a href="{% url 'articles:index' %}">홈으로</a>
+  <hr>
   {% block container %}{% endblock container %}
 </body>
 </html>
