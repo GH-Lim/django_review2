@@ -12,12 +12,10 @@ class Article(models.Model):
         ordering = ('-pk', )
 
 
-class Person(models.Model):
-    name = models.CharField(max_length=10)
-    email = models.CharField(
-        max_length=100,
-        validators=[EmailValidator(message='이메일 형식에 맞지 않습니다.')]
-    )
-    age = models.IntegerField(
-        validators=[MinValueValidator(limit_value=19, message="미성년자는 노노")]
-    )
+class Comment(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments')
+    content = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-pk']

@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Article::Index{% endblock title %}
 
 {% block container %}
+  <img src="{% static '/articles/images/sky.png/' %}" alt="">
   <h2>Article List</h2>
   <a href="{% url 'articles:create' %}">생성하기</a>
   <hr>
