@@ -3,27 +3,41 @@
 {% block title %}Article::Detail{% endblock title %}
 
 {% block container %}
+{% comment %} Display article contents {% endcomment %}
 <h2>{{ article.title }}</h2>
 <p>{{ article.created_at }}</p>
 <hr>
-<p>{{ article.content }}</p>
+<p>{{ article.content|linebreaksbr }}</p>
 <hr>
-<a href="{% url 'articles:update' article.pk %}">[수정하기]</a>
-<form action="{% url 'articles:delete' article.pk %}" method="post">
-  {% csrf_token %}
-  <button type="submit">삭제하기</button>
-</form>
+
+{% comment %} Edit & Delete button {% endcomment %}
+{% if user.is_authenticated %}
+  <a href="{% url 'articles:update' article.pk %}"><button>수정하기</button></a>
+  <form action="{% url 'articles:delete' article.pk %}" method="post">
+    {% csrf_token %}
+    <button type="submit">삭제하기</button>
+  </form>
+{% endif %}
+
+{% comment %} Write comment {% endcomment %}
 <form action="{% url 'articles:create_comment' article.pk %}" method="POST">
   {% csrf_token %}
   {{ form.as_p }}
-  <button type="submit">작성하기</button>
+  <a type="submit" {% if user.is_anonymous %}onclick="return confirm('로그인이 필요합니다.')"{% endif %}><button>작성하기</button></a>
 </form>
+
+{% comment %} Display comments {% endcomment %}
 <ul>
   {% for comment in comments %}
-    <li>{{comment.content}}<form action="{% url 'articles:delete_comment' article.pk comment.pk %}" method="post">
-    {% csrf_token %}
-    <button type="submit">댓글삭제</button>
-    </form></li>
+    <li>
+    <span>{{ comment.content }}</span>
+    {% if user.is_authenticated %}
+      <form action="{% url 'articles:delete_comment' article.pk comment.pk %}" method="post">
+      {% csrf_token %}
+      <button type="submit">댓글삭제</button>
+      </form>
+    {% endif %}
+    </li>
     {% empty %}
     <p>아직 댓글이 없습니다.</p>
   {% endfor %}

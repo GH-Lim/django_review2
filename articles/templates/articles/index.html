@@ -6,7 +6,7 @@
 {% block container %}
   <img src="{% static '/articles/images/sky.png/' %}" alt="">
   <h2>Article List</h2>
-  <a href="{% url 'articles:create' %}">생성하기</a>
+  <a href="{% url 'articles:create' %} " {% if user.is_anonymous %}onclick="return confirm('로그인이 필요합니다.')"{% endif %}><button>글쓰기</button></a>
   <hr>
   {% for article in articles %}
   <div>
