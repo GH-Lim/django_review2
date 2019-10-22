@@ -7,7 +7,8 @@ class ArticleForm(forms.ModelForm):
     
     class Meta:
         model = Article
-        fields = '__all__' # 모든 필드를 보겠다
+        fields = ['title', 'content']
+        # '__all__' # 모든 필드를 보겠다
 
 
 class CommentForm(forms.ModelForm):

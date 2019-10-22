@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Accounts::정보수정{% endblock title %}
+
+{% block container %}
+  <h2>정보수정</h2>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">수정하기</button>
+  </form>
+{% endblock container %}

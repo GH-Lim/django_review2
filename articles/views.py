@@ -31,13 +31,10 @@ def detail(request, article_pk):
 def create(request):
     form = ArticleForm(request.POST or None)
     if form.is_valid():
-        article = form.save()
-        # article.save()
-        article_pk = article.pk
-        return redirect('articles:detail', article_pk)
-    # else:  # GET
-    #     # Article 을 생성하기 위한 페이지를 달라고 하는 요청
-    #     form = ArticleForm()
+        article = form.save(commit=False)
+        article.user = request.user
+        article.save()
+        return redirect('articles:detail', article.pk)
     context = {'form': form}
     return render(request, 'articles/create.html', context)
 
@@ -46,8 +43,11 @@ def create(request):
 def update(request, article_pk):
     article = get_object_or_404(Article, pk=article_pk)
     form = ArticleForm(request.POST or None, instance=article)
-    if form.is_valid():
-        form.save()
+    if article.user == request.user:
+        if form.is_valid():
+            form.save()
+            return redirect('articles:detail', article_pk)
+    else:
         return redirect('articles:detail', article_pk)
     context = {'form': form}
     return render(request, 'articles/update.html', context)
@@ -57,7 +57,10 @@ def update(request, article_pk):
 def delete(request, article_pk):
     if request.user.is_authenticated:
         article = get_object_or_404(Article, pk=article_pk)
-        article.delete()
+        if article.user == request.user:
+            article.delete()
+        else:
+            return redirect('articles:detail', article_pk)
     return redirect('articles:index')
 
 
@@ -69,6 +72,7 @@ def create_comment(request, article_pk):
         if form.is_valid():
             comment = form.save(commit=False)
             comment.article = article
+            comment.user = request.user
             comment.save()
     return redirect('articles:detail', article_pk)
     # context = {
@@ -82,6 +86,7 @@ def create_comment(request, article_pk):
 def delete_comment(request, article_pk, comment_pk):
     if request.user.is_authenticated:
         comment = get_object_or_404(Comment, pk=comment_pk)
-        comment.delete()
-        return redirect('articles:detail', article_pk)
+        if comment.user == request.user:
+            comment.delete()
+            return redirect('articles:detail', article_pk)
     return HttpResponse('Your are Unauthorized', status=401)  # 401 -> 인증되지 않았다
