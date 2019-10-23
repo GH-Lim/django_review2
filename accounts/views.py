@@ -1,16 +1,16 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm, PasswordChangeForm
+from django.contrib.auth.forms import AuthenticationForm, UserChangeForm, PasswordChangeForm
 from django.contrib.auth import login as auth_login, logout as auth_logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from .forms import CustomUserChangeForm
+from .forms import CustomUserChangeForm, CustomUserCreationForm
 
 
 def signup(request):
     if request.user.is_authenticated:
         return redirect('articles:index')
     
-    form = UserCreationForm(request.POST or None)
+    form = CustomUserCreationForm(request.POST or None)
     if form.is_valid():
         user = form.save()
         auth_login(request, user)

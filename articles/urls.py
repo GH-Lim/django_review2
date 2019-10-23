@@ -13,4 +13,10 @@ urlpatterns = [
     # comments #
     path('<int:article_pk>/comment/', views.create_comment, name='create_comment'),
     path('<int:article_pk>/comment/<int:comment_pk>/delete/', views.delete_comment, name='delete_comment'),
+
+    # like
+    path('<int:article_pk>/like/', views.like, name='like'),
+
+    # follow
+    path('<int:article_pk>/follow/<int:user_pk>', views.follow, name='follow'),
 ]

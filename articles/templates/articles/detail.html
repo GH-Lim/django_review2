@@ -10,7 +10,14 @@
 <hr>
 <p>{{ article.content|linebreaksbr }}</p>
 <hr>
-
+<a href="{% url 'articles:like' article.pk %}">
+  {% if user in article.liked_users.all %}
+    <i class="fas fa-heart fa-lg" style="color: red"></i>
+  {% else %}
+    <i class="far fa-heart fa-lg" style="color: red"></i>
+  {% endif %}
+</a>
+<span>{{ article.liked_users.all | length }}명이 이 글을 좋아합니다.</span>
 {% comment %} Edit & Delete button {% endcomment %}
 {% if request.user == article.user %}
   <a href="{% url 'articles:update' article.pk %}"><button>수정하기</button></a>
@@ -44,5 +51,7 @@
     <p>아직 댓글이 없습니다.</p>
   {% endfor %}
 </ul>
+
+{% include 'articles/_follow.html' %}
 
 {% endblock container %}
