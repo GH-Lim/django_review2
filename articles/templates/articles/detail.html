@@ -10,14 +10,28 @@
 <hr>
 <p>{{ article.content|linebreaksbr }}</p>
 <hr>
-<a href="{% url 'articles:like' article.pk %}">
+{% comment %} <a href="{% url 'articles:like' article.pk %}">
   {% if user in article.liked_users.all %}
     <i class="fas fa-heart fa-lg" style="color: red"></i>
   {% else %}
     <i class="far fa-heart fa-lg" style="color: red"></i>
   {% endif %}
-</a>
-<span>{{ article.liked_users.all | length }}명이 이 글을 좋아합니다.</span>
+</a> {% endcomment %}
+
+<i
+  class="{% if user in article.liked_users.all %}fas{% else %}far{% endif %} fa-heart fa-lg"
+  id = "like-btn" data-id="{{ article.pk }}" style="color: red">
+</i>
+
+<span><span id = "like-cnt">{{ article.liked_users.all | length }}</span>명이 이 글을 좋아합니다.</span>
+
+
+
+
+
+
+
+{% comment %} <span>{{ article.liked_users.all | length }}명이 이 글을 좋아합니다.</span> {% endcomment %}
 {% comment %} Edit & Delete button {% endcomment %}
 {% if request.user == article.user %}
   <a href="{% url 'articles:update' article.pk %}"><button>수정하기</button></a>
@@ -54,4 +68,28 @@
 
 {% include 'articles/_follow.html' %}
 
+<script>
+  const likeBtn = document.querySelector('#like-btn')
+  
+  likeBtn.addEventListener('click', event => {
+    // Button 의 data-id 속성을 아래 코드로 가지고 온다.
+    const articleId = event.target.dataset.id
+    axios.get(`/articles/${articleId}/like/`)
+      .then(response => {
+        // 좋아요 상태 버튼 변경
+        if (response.data.liked) {
+          likeBtn.classList.remove('far')
+          likeBtn.classList.add('fas')
+        }
+        else {
+          likeBtn.classList.remove('fas')
+          likeBtn.classList.add('far')
+        }
+
+        // 좋아요 수 변경
+        const likeCnt = document.querySelector('#like-cnt')
+        likeCnt.innerText = response.data.count
+      })
+  })
+</script>
 {% endblock container %}
